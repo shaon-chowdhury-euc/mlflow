@@ -59,7 +59,7 @@ class SqlRegisteredModel(Base):
         for mv in self.model_versions:
             stage = mv.current_stage
             if stage != STAGE_DELETED_INTERNAL and (
-                stage not in latest_versions or latest_versions[stage].version < mv.version
+                stage not in latest_versions or int(latest_versions[stage].version) < int(mv.version)
             ):
                 latest_versions[stage] = mv
         return RegisteredModel(
@@ -78,7 +78,7 @@ class SqlModelVersion(Base):
 
     name = Column(String(256), ForeignKey("registered_models.name", onupdate="cascade"))
 
-    version = Column(Integer, nullable=False)
+    version = Column(String(256), nullable=False)
 
     creation_time = Column(BigInteger, default=get_current_time_millis)
 
@@ -158,7 +158,7 @@ class SqlModelVersionTag(Base):
 
     name = Column(String(256))
 
-    version = Column(Integer)
+    version = Column(String(256))
 
     key = Column(String(250), nullable=False)
 
@@ -200,7 +200,7 @@ class SqlRegisteredModelAlias(Base):
         ),
     )
     alias = Column(String(256), nullable=False)
-    version = Column(Integer, nullable=False)
+    version = Column(String(256), nullable=False)
 
     # linked entities
     registered_model = relationship(
